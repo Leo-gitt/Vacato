@@ -1,4 +1,4 @@
-import * as React from 'react'
+﻿import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { XIcon } from 'lucide-react'
 
@@ -37,14 +37,14 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-0 rounded-2xl border border-stone-800 bg-[#2d2d2d] shadow-2xl shadow-black/40 duration-150 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-0 rounded-2xl border border-gray-800 bg-[#1f2937] shadow-2xl shadow-black/40 duration-150 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
           className,
         )}
         {...props}
       >
         {children}
         {showCloseButton && (
-          <DialogPrimitive.Close className="absolute top-4 right-5 rounded p-0.5 text-stone-500 transition-colors hover:bg-white/10 hover:text-white cursor-pointer">
+          <DialogPrimitive.Close className="absolute top-4 right-5 rounded p-0.5 text-slate-400 transition-colors hover:bg-white/10 hover:text-white cursor-pointer">
             <XIcon size={15} />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
@@ -58,7 +58,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn('flex items-center justify-between border-b border-stone-800 px-5 py-4', className)}
+      className={cn('flex items-center justify-between border-b border-gray-800 px-5 py-4', className)}
       {...props}
     />
   )

@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import type { LeaveType, RequestStatus, Role } from '@/lib/schemas'
 
-export const DARK_CARD = 'border-stone-800 bg-[#333333] shadow-lg shadow-black/20'
+export const DARK_CARD = 'border-gray-700/40 bg-[#1f2937] shadow-lg shadow-black/30'
 
 export const STATUS_PILL: Record<RequestStatus, { cls: string; dot: string }> = {
   pending: { cls: 'bg-amber-500/10 text-amber-400 ring-1 ring-inset ring-amber-500/30', dot: 'bg-amber-400' },

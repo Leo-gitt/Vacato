@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   ArrowRight,
@@ -23,6 +23,7 @@ import { StatCard  } from '@/components/stat-card'
 import type {StatColor} from '@/components/stat-card';
 import { useCreateRequest, useRequests } from '@/hooks/use-requests'
 import { LEAVE_BALANCE } from '@/lib/mock-data'
+import { useLeavePolicyStore } from '@/stores/leave-policy-store'
 import type { LeaveRequest, LeaveType } from '@/lib/schemas'
 import { Route as AuthRoute } from '@/routes/_authenticated'
 import { cn } from '@/lib/utils'
@@ -51,8 +52,18 @@ function DashboardPage() {
   const createRequest = useCreateRequest(user)
   const [modalOpen, setModalOpen] = useState(false)
 
+  const { policy } = useLeavePolicyStore()
   const mine = requests.filter((r) => r.userId === user.id)
-  const balance = user.role === 'admin' ? null : LEAVE_BALANCE[user.role]
+  const balance = user.role === 'admin' ? null : (() => {
+    const role = user.role as 'student' | 'employee'
+    const used = LEAVE_BALANCE[role]
+    const totals = policy[role]
+    return {
+      vacation: { total: totals.vacation, used: used.vacation.used },
+      sick:     { total: totals.sick,     used: used.sick.used     },
+      personal: { total: totals.personal, used: used.personal.used },
+    }
+  })()
 
   const stats: Array<{ label: string; value: number; sub: string; color: StatColor; icon: LucideIcon; used?: number; total?: number }> = balance
     ? [
@@ -77,13 +88,13 @@ function DashboardPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-white">Good morning, {user.name.split(' ')[0]}</h1>
-          <p className="mt-1 text-sm text-stone-400">{todayStr}</p>
+          <p className="mt-1 text-sm text-slate-300">{todayStr}</p>
         </div>
         {!isAdmin && (
           <Button
             onClick={() => setModalOpen(true)}
             size="lg"
-            className="gap-2 bg-indigo-600 px-6 py-3 text-base font-semibold shadow-lg shadow-indigo-950/40 transition-all duration-200 hover:scale-[1.03] hover:bg-indigo-500 hover:shadow-xl hover:shadow-indigo-900/40"
+            className="gap-2 bg-teal-600 px-6 py-3 text-base font-semibold shadow-lg shadow-teal-950/40 transition-all duration-200 hover:scale-[1.03] hover:bg-teal-500 hover:shadow-xl hover:shadow-teal-900/40"
           >
             <Plus size={18} strokeWidth={2} /> New Request
           </Button>
@@ -98,18 +109,18 @@ function DashboardPage() {
 
       <div className="grid grid-cols-3 gap-5">
         <Card className={cn('col-span-2 overflow-hidden', DARK_CARD)}>
-          <div className="flex items-center justify-between border-b border-stone-800 px-5 py-4">
+          <div className="flex items-center justify-between border-b border-gray-800 px-5 py-4">
             <h2 className="text-base font-semibold text-white">{isAdmin ? 'Recent Requests' : 'My Recent Requests'}</h2>
             <Button
               variant="ghost"
               size="sm"
-              className="text-stone-400 hover:bg-white/[0.06] hover:text-white"
+              className="text-slate-300 hover:bg-white/[0.06] hover:text-white"
               onClick={() => navigate({ to: '/requests' })}
             >
               View all <ArrowRight size={12} strokeWidth={1.75} />
             </Button>
           </div>
-          <div className="divide-y divide-stone-800">
+          <div className="divide-y divide-gray-800">
             {recent.map((r) => {
               const TypeIcon = TYPE_ICON[r.type]
               return (
@@ -121,11 +132,11 @@ function DashboardPage() {
                     <div className="min-w-0">
                       {isAdmin && (
                         <p className="text-xs font-semibold text-stone-300">
-                          {r.userName} <span className="font-normal text-stone-500 capitalize">({r.userRole})</span>
+                          {r.userName} <span className="font-normal text-slate-400 capitalize">({r.userRole})</span>
                         </p>
                       )}
                       <p className="text-sm font-medium text-stone-200">{BADGE_LABEL[r.type]}</p>
-                      <p className="text-xs text-stone-500 tabular-nums">
+                      <p className="text-xs text-slate-400 tabular-nums">
                         {r.start} → {r.end} · {r.days}d
                       </p>
                     </div>
@@ -134,7 +145,7 @@ function DashboardPage() {
                 </div>
               )
             })}
-            {recent.length === 0 && <div className="px-5 py-10 text-center text-sm text-stone-500">No requests yet.</div>}
+            {recent.length === 0 && <div className="px-5 py-10 text-center text-sm text-slate-400">No requests yet.</div>}
           </div>
         </Card>
 
@@ -151,13 +162,13 @@ function DashboardPage() {
                     </div>
                     <p className="flex-1 text-sm font-semibold text-stone-200">{label}</p>
                     <p className="text-sm font-semibold text-white">
-                      {b.total - b.used} <span className="font-normal text-stone-500">left</span>
+                      {b.total - b.used} <span className="font-normal text-slate-400">left</span>
                     </p>
                   </div>
-                  <div className="mb-2 h-2.5 overflow-hidden rounded-full bg-stone-800">
+                  <div className="mb-2 h-2.5 overflow-hidden rounded-full bg-gray-800">
                     <div className={cn('h-full rounded-full transition-all', bar)} style={{ width: `${pct}%` }} />
                   </div>
-                  <div className="flex items-center justify-between text-xs text-stone-500">
+                  <div className="flex items-center justify-between text-xs text-slate-400">
                     <span>
                       {b.used} of {b.total} days used
                     </span>
@@ -169,7 +180,7 @@ function DashboardPage() {
           ) : (
             <>
               <Card className={cn(DARK_CARD, 'p-5')}>
-                <p className="mb-3 text-[10px] font-semibold tracking-widest text-stone-400 uppercase">By Type</p>
+                <p className="mb-3 text-[10px] font-semibold tracking-widest text-slate-300 uppercase">By Type</p>
                 {(['vacation', 'sick', 'personal'] as const).map((t) => (
                   <div key={t} className="flex items-center justify-between py-1.5">
                     <Pill {...TYPE_PILL[t]} label={BADGE_LABEL[t]} />
@@ -180,7 +191,7 @@ function DashboardPage() {
                 ))}
               </Card>
               <Card className={cn(DARK_CARD, 'p-5')}>
-                <p className="mb-3 text-[10px] font-semibold tracking-widest text-stone-400 uppercase">By Status</p>
+                <p className="mb-3 text-[10px] font-semibold tracking-widest text-slate-300 uppercase">By Status</p>
                 {(['pending', 'approved', 'rejected'] as const).map((s) => (
                   <div key={s} className="flex items-center justify-between py-1.5">
                     <Pill {...STATUS_PILL[s]} label={BADGE_LABEL[s]} />

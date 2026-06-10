@@ -1,4 +1,4 @@
-import * as React from 'react'
+﻿import * as React from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { CheckIcon, ChevronDownIcon } from 'lucide-react'
 
@@ -28,7 +28,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon size={14} className="text-stone-400" />
+        <ChevronDownIcon size={14} className="text-slate-300" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )

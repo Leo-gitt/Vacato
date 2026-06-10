@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRequestsRouteImport } from './routes/_authenticated/requests'
+import { Route as AuthenticatedLeavePolicyRouteImport } from './routes/_authenticated/leave-policy'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
@@ -36,6 +37,12 @@ const AuthenticatedRequestsRoute = AuthenticatedRequestsRouteImport.update({
   path: '/requests',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedLeavePolicyRoute =
+  AuthenticatedLeavePolicyRouteImport.update({
+    id: '/leave-policy',
+    path: '/leave-policy',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
   id: '/export',
   path: '/export',
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
+  '/leave-policy': typeof AuthenticatedLeavePolicyRoute
   '/requests': typeof AuthenticatedRequestsRoute
 }
 export interface FileRoutesByTo {
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
   '/calendar': typeof AuthenticatedCalendarRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
+  '/leave-policy': typeof AuthenticatedLeavePolicyRoute
   '/requests': typeof AuthenticatedRequestsRoute
 }
 export interface FileRoutesById {
@@ -76,6 +85,7 @@ export interface FileRoutesById {
   '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
+  '/_authenticated/leave-policy': typeof AuthenticatedLeavePolicyRoute
   '/_authenticated/requests': typeof AuthenticatedRequestsRoute
 }
 export interface FileRouteTypes {
@@ -86,9 +96,17 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/dashboard'
     | '/export'
+    | '/leave-policy'
     | '/requests'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/calendar' | '/dashboard' | '/export' | '/requests'
+  to:
+    | '/'
+    | '/login'
+    | '/calendar'
+    | '/dashboard'
+    | '/export'
+    | '/leave-policy'
+    | '/requests'
   id:
     | '__root__'
     | '/'
@@ -97,6 +115,7 @@ export interface FileRouteTypes {
     | '/_authenticated/calendar'
     | '/_authenticated/dashboard'
     | '/_authenticated/export'
+    | '/_authenticated/leave-policy'
     | '/_authenticated/requests'
   fileRoutesById: FileRoutesById
 }
@@ -136,6 +155,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRequestsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/leave-policy': {
+      id: '/_authenticated/leave-policy'
+      path: '/leave-policy'
+      fullPath: '/leave-policy'
+      preLoaderRoute: typeof AuthenticatedLeavePolicyRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/export': {
       id: '/_authenticated/export'
       path: '/export'
@@ -164,6 +190,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCalendarRoute: typeof AuthenticatedCalendarRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
+  AuthenticatedLeavePolicyRoute: typeof AuthenticatedLeavePolicyRoute
   AuthenticatedRequestsRoute: typeof AuthenticatedRequestsRoute
 }
 
@@ -171,6 +198,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCalendarRoute: AuthenticatedCalendarRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
+  AuthenticatedLeavePolicyRoute: AuthenticatedLeavePolicyRoute,
   AuthenticatedRequestsRoute: AuthenticatedRequestsRoute,
 }
 

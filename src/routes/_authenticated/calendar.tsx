@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -82,12 +82,12 @@ function CalendarPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-white">{title}</h1>
-          <p className="mt-0.5 text-sm text-stone-400">
+          <p className="mt-0.5 text-sm text-slate-300">
             Approved absences — {MONTHS[month]} {year}
           </p>
         </div>
         <div className="flex items-center gap-5">
-          <div className="flex gap-3 text-xs text-stone-400">
+          <div className="flex gap-3 text-xs text-slate-300">
             {LEGEND.map((l) => (
               <span key={l.label} className="flex items-center gap-1.5">
                 <span className={cn('inline-block h-2 w-2 rounded-full', l.color)} />
@@ -96,26 +96,26 @@ function CalendarPage() {
             ))}
           </div>
           <div className="flex items-center gap-0.5">
-            <button onClick={prev} className="cursor-pointer rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-white/[0.06] hover:text-white">
+            <button onClick={prev} className="cursor-pointer rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-white/[0.06] hover:text-white">
               <ChevronLeft size={16} strokeWidth={1.75} />
             </button>
             <span className="w-36 text-center text-sm font-semibold text-white">
               {MONTHS[month]} {year}
             </span>
-            <button onClick={next} className="cursor-pointer rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-white/[0.06] hover:text-white">
+            <button onClick={next} className="cursor-pointer rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-white/[0.06] hover:text-white">
               <ChevronRight size={16} strokeWidth={1.75} />
             </button>
           </div>
         </div>
       </div>
       <Card className={cn('overflow-hidden', DARK_CARD)}>
-        <div className="grid grid-cols-7 border-b border-stone-800">
+        <div className="grid grid-cols-7 border-b border-gray-800">
           {WEEKDAYS.map((d, i) => (
             <div
               key={d}
               className={cn(
                 'py-3 text-center text-[11px] font-semibold tracking-wide uppercase',
-                i === 0 || i === 6 ? 'text-stone-600' : 'text-stone-500',
+                i === 0 || i === 6 ? 'text-slate-500' : 'text-slate-400',
               )}
             >
               {d}
@@ -132,7 +132,7 @@ function CalendarPage() {
               <div
                 key={i}
                 className={cn(
-                  'min-h-24 border-stone-800 p-2 transition-colors',
+                  'min-h-24 border-gray-800 p-2 transition-colors',
                   i % 7 !== 6 && 'border-r',
                   !lastRow && 'border-b',
                   !day ? 'bg-white/[0.015]' : weekend ? 'bg-white/[0.01]' : 'hover:bg-white/[0.04]',
@@ -143,7 +143,7 @@ function CalendarPage() {
                     <span
                       className={cn(
                         'mb-1 flex h-7 w-7 items-center justify-center rounded-full text-sm',
-                        today_ ? 'bg-indigo-600 font-semibold text-white shadow-md shadow-indigo-950/40' : weekend ? 'text-stone-600' : 'text-stone-300',
+                        today_ ? 'bg-teal-600 font-semibold text-white shadow-md shadow-teal-950/40' : weekend ? 'text-slate-500' : 'text-stone-300',
                       )}
                     >
                       {day}
@@ -158,7 +158,7 @@ function CalendarPage() {
                           {user.role !== 'student' ? l.userName.split(' ')[0] : BADGE_LABEL[l.type]}
                         </div>
                       ))}
-                      {leaves.length > 2 && <p className="px-1 text-[10px] text-stone-500">+{leaves.length - 2} more</p>}
+                      {leaves.length > 2 && <p className="px-1 text-[10px] text-slate-400">+{leaves.length - 2} more</p>}
                     </div>
                   </>
                 )}

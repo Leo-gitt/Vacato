@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 
@@ -43,17 +43,17 @@ function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <div className="mb-3 inline-flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-md shadow-blue-900/40">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600 shadow-md shadow-teal-900/40">
               <span className="text-lg font-bold text-white">V</span>
             </div>
             <span className="text-2xl font-semibold tracking-tight text-white">Vacato</span>
           </div>
-          <p className="text-sm text-stone-400">Leave management · Brainster Next College</p>
+          <p className="text-sm text-slate-300">Leave management · Brainster Next College</p>
         </div>
         <Card className={cn(DARK_CARD, 'p-6')}>
           <h2 className="mb-5 text-sm font-semibold text-white">Sign in to your account</h2>
           <div className="mb-5">
-            <p className="mb-2 text-xs font-medium text-stone-400">Sign in as</p>
+            <p className="mb-2 text-xs font-medium text-slate-300">Sign in as</p>
             <div className="grid grid-cols-3 gap-1.5 rounded-lg bg-white/[0.06] p-1">
               {ROLE_OPTIONS.map((r) => (
                 <button
@@ -61,7 +61,7 @@ function LoginPage() {
                   onClick={() => setRole(r.key)}
                   className={cn(
                     'cursor-pointer rounded-md py-1.5 text-xs font-medium transition-all',
-                    role === r.key ? 'bg-[#3a3a3a] text-white shadow-sm' : 'text-stone-400 hover:text-stone-200',
+                    role === r.key ? 'bg-[#3a3a3a] text-white shadow-sm' : 'text-slate-300 hover:text-stone-200',
                   )}
                 >
                   {r.label}
@@ -71,29 +71,29 @@ function LoginPage() {
           </div>
           <div className="space-y-3.5">
             <div>
-              <Label className="text-stone-400">Email address</Label>
+              <Label className="text-slate-300">Email address</Label>
               <Input
                 readOnly
                 value={current.email}
-                className="cursor-default border-stone-700 bg-[#252525] text-stone-400 placeholder:text-stone-600 focus-visible:border-stone-600 focus-visible:ring-stone-500/20"
+                className="cursor-default border-gray-700 bg-[#1a2233] text-slate-300 placeholder:text-slate-500 focus-visible:border-gray-600 focus-visible:ring-teal-500/20"
               />
             </div>
             <div>
-              <Label className="text-stone-400">Password</Label>
+              <Label className="text-slate-300">Password</Label>
               <Input
                 type="password"
                 readOnly
                 defaultValue="password"
-                className="border-stone-700 bg-[#2a2a2a] text-stone-200 placeholder:text-stone-600 focus-visible:border-stone-600 focus-visible:ring-stone-500/20"
+                className="border-gray-700 bg-[#1a2233] text-stone-200 placeholder:text-slate-500 focus-visible:border-gray-600 focus-visible:ring-teal-500/20"
               />
             </div>
             <Button className="w-full justify-center" onClick={handleSignIn}>
               Sign in <ArrowRight size={14} strokeWidth={1.75} />
             </Button>
           </div>
-          <p className="mt-4 text-center text-xs text-stone-500">Demo — select any role above</p>
+          <p className="mt-4 text-center text-xs text-slate-400">Demo — select any role above</p>
         </Card>
-        <p className="mt-6 text-center text-xs text-stone-500">© 2026 Brainster Next College · Vacato v1.0</p>
+        <p className="mt-6 text-center text-xs text-slate-400">© 2026 Brainster Next College · Vacato v1.0</p>
       </div>
     </div>
   )

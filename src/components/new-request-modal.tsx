@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useRef, useState } from 'react'
 import { CalendarIcon, CheckCircle, Sun, Thermometer, UploadCloud, User as UserIcon  } from 'lucide-react'
 import type {LucideIcon} from 'lucide-react';
 
@@ -33,7 +33,8 @@ export function NewRequestModal({ open, onOpenChange, onSubmit }: NewRequestModa
   const [start, setStart] = useState('')
   const [end, setEnd] = useState('')
   const [reason, setReason] = useState('')
-  const [docAdded, setDocAdded] = useState(false)
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const days = diffDays(start, end)
 
@@ -42,7 +43,7 @@ export function NewRequestModal({ open, onOpenChange, onSubmit }: NewRequestModa
     setStart('')
     setEnd('')
     setReason('')
-    setDocAdded(false)
+    setUploadedFile(null)
   }
 
   const handleOpenChange = (next: boolean) => {
@@ -50,7 +51,7 @@ export function NewRequestModal({ open, onOpenChange, onSubmit }: NewRequestModa
     onOpenChange(next)
   }
 
-  const candidate = { type, start, end, reason: reason.trim(), hasDoc: docAdded }
+  const candidate = { type, start, end, reason: reason.trim(), hasDoc: uploadedFile !== null }
   const parsed = newRequestSchema.safeParse(candidate)
   const canSubmit = parsed.success
 
@@ -68,7 +69,7 @@ export function NewRequestModal({ open, onOpenChange, onSubmit }: NewRequestModa
         </DialogHeader>
         <DialogBody className="space-y-4">
           <div>
-            <p className="mb-2 text-xs font-medium text-stone-400">Leave Type</p>
+            <p className="mb-2 text-xs font-medium text-slate-300">Leave Type</p>
             <div className="grid grid-cols-3 gap-2">
               {TYPES.map((t) => (
                 <button
@@ -76,48 +77,48 @@ export function NewRequestModal({ open, onOpenChange, onSubmit }: NewRequestModa
                   onClick={() => setType(t.key)}
                   className={cn(
                     'cursor-pointer rounded-xl border-2 p-3 text-left transition-all',
-                    type === t.key ? 'border-indigo-500/50 bg-indigo-500/10' : 'border-stone-700 bg-[#2a2a2a] hover:border-stone-600',
+                    type === t.key ? 'border-teal-500/50 bg-teal-500/10' : 'border-gray-700 bg-[#1a2233] hover:border-gray-600',
                   )}
                 >
                   <div
                     className={cn(
                       'mb-2 flex h-7 w-7 items-center justify-center rounded-lg',
-                      type === t.key ? 'bg-indigo-600' : 'bg-[#3a3a3a]',
+                      type === t.key ? 'bg-teal-600' : 'bg-[#1e293b]',
                     )}
                   >
-                    <t.icon size={14} strokeWidth={1.75} className={type === t.key ? 'text-white' : 'text-stone-400'} />
+                    <t.icon size={14} strokeWidth={1.75} className={type === t.key ? 'text-white' : 'text-slate-300'} />
                   </div>
                   <p className="text-xs font-semibold text-stone-200">{t.label}</p>
-                  <p className="mt-0.5 text-xs text-stone-500">{t.desc}</p>
+                  <p className="mt-0.5 text-xs text-slate-400">{t.desc}</p>
                 </button>
               ))}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-stone-400">Start Date</Label>
+              <Label className="text-slate-300">Start Date</Label>
               <Input
                 type="date"
                 value={start}
                 onChange={(e) => setStart(e.target.value)}
-                className="border-stone-700 bg-[#2a2a2a] text-stone-200 [color-scheme:dark] placeholder:text-stone-600 focus-visible:border-stone-600 focus-visible:ring-stone-500/20"
+                className="border-gray-700 bg-[#1a2233] text-stone-200 [color-scheme:dark] placeholder:text-slate-500 focus-visible:border-gray-600 focus-visible:ring-teal-500/20"
               />
             </div>
             <div>
-              <Label className="text-stone-400">End Date</Label>
+              <Label className="text-slate-300">End Date</Label>
               <Input
                 type="date"
                 value={end}
                 min={start}
                 onChange={(e) => setEnd(e.target.value)}
-                className="border-stone-700 bg-[#2a2a2a] text-stone-200 [color-scheme:dark] placeholder:text-stone-600 focus-visible:border-stone-600 focus-visible:ring-stone-500/20"
+                className="border-gray-700 bg-[#1a2233] text-stone-200 [color-scheme:dark] placeholder:text-slate-500 focus-visible:border-gray-600 focus-visible:ring-teal-500/20"
               />
             </div>
           </div>
           {days > 0 && (
-            <div className="flex items-center gap-2 rounded-lg border border-stone-800 bg-white/[0.03] px-3 py-2">
-              <CalendarIcon size={14} strokeWidth={1.75} className="text-stone-500" />
-              <span className="text-sm text-stone-400">
+            <div className="flex items-center gap-2 rounded-lg border border-gray-700/50 bg-white/[0.04] px-3 py-2">
+              <CalendarIcon size={14} strokeWidth={1.75} className="text-slate-400" />
+              <span className="text-sm text-slate-300">
                 <span className="font-semibold text-white">
                   {days} day{days !== 1 ? 's' : ''}
                 </span>{' '}
@@ -126,36 +127,50 @@ export function NewRequestModal({ open, onOpenChange, onSubmit }: NewRequestModa
             </div>
           )}
           <div>
-            <Label className="text-stone-400">Reason</Label>
+            <Label className="text-slate-300">Reason</Label>
             <Textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={3}
               placeholder="Briefly describe the reason for your leave…"
-              className="border-stone-700 bg-[#2a2a2a] text-stone-200 placeholder:text-stone-600 focus-visible:border-stone-600 focus-visible:ring-stone-500/20"
+              className="border-gray-700 bg-[#1a2233] text-stone-200 placeholder:text-slate-500 focus-visible:border-gray-600 focus-visible:ring-teal-500/20"
             />
           </div>
           {type === 'sick' && (
-            <div
-              onClick={() => setDocAdded((d) => !d)}
-              className={cn(
-                'cursor-pointer rounded-xl border-2 border-dashed p-4 text-center transition-all',
-                docAdded ? 'border-green-500/40 bg-green-500/10' : 'border-stone-700 hover:border-stone-600 hover:bg-white/[0.03]',
-              )}
-            >
-              {docAdded ? (
-                <div className="flex items-center justify-center gap-2 text-green-400">
-                  <CheckCircle size={16} strokeWidth={1.75} />
-                  <span className="text-sm font-medium">Medical document attached</span>
-                </div>
-              ) : (
-                <>
-                  <UploadCloud size={22} strokeWidth={1.75} className="mx-auto mb-1.5 text-stone-600" />
-                  <p className="text-sm font-medium text-stone-400">Upload medical document</p>
-                  <p className="mt-0.5 text-xs text-stone-500">PDF or image · max 10 MB</p>
-                </>
-              )}
-            </div>
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.png,application/pdf,image/png"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null
+                  setUploadedFile(file)
+                  e.target.value = ''
+                }}
+              />
+              <div
+                onClick={() => uploadedFile ? setUploadedFile(null) : fileInputRef.current?.click()}
+                className={cn(
+                  'cursor-pointer rounded-xl border-2 border-dashed p-4 text-center transition-all',
+                  uploadedFile ? 'border-green-500/40 bg-green-500/10' : 'border-gray-700 hover:border-gray-600 hover:bg-white/[0.04]',
+                )}
+              >
+                {uploadedFile ? (
+                  <div className="flex items-center justify-center gap-2 text-green-400">
+                    <CheckCircle size={16} strokeWidth={1.75} />
+                    <span className="text-sm font-medium truncate max-w-[200px]">{uploadedFile.name}</span>
+                    <span className="text-xs text-green-600">(click to remove)</span>
+                  </div>
+                ) : (
+                  <>
+                    <UploadCloud size={22} strokeWidth={1.75} className="mx-auto mb-1.5 text-slate-500" />
+                    <p className="text-sm font-medium text-slate-300">Upload medical document</p>
+                    <p className="mt-0.5 text-xs text-slate-400">PDF or PNG · max 10 MB</p>
+                  </>
+                )}
+              </div>
+            </>
           )}
           <div className="flex justify-end gap-2 pt-1">
             <Button variant="secondary" onClick={() => handleOpenChange(false)}>

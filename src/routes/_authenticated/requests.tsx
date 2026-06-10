@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Check, Inbox, Plus, X } from 'lucide-react'
 
@@ -62,7 +62,7 @@ function RequestsPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-white">{isAdmin ? 'All Requests' : 'My Requests'}</h1>
-          <p className="mt-0.5 text-sm text-stone-400">
+          <p className="mt-0.5 text-sm text-slate-300">
             {isAdmin ? 'Review and manage leave requests' : 'Manage your leave requests'}
           </p>
         </div>
@@ -80,10 +80,10 @@ function RequestsPage() {
             onClick={() => setFilter(t.key)}
             className={cn(
               'cursor-pointer rounded-md px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all',
-              filter === t.key ? 'bg-[#3a3a3a] text-white shadow-sm' : 'text-stone-400 hover:text-stone-200',
+              filter === t.key ? 'bg-[#1e293b] text-white shadow-sm' : 'text-slate-300 hover:text-stone-200',
             )}
           >
-            {t.label} {t.count > 0 && <span className="ml-0.5 text-stone-500">({t.count})</span>}
+            {t.label} {t.count > 0 && <span className="ml-0.5 text-slate-400">({t.count})</span>}
           </button>
         ))}
       </div>
@@ -92,28 +92,28 @@ function RequestsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-stone-800 bg-white/[0.02]">
-                {isAdmin && <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-stone-500 uppercase">Person</th>}
-                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-stone-500 uppercase">Type</th>
-                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-stone-500 uppercase">Period</th>
-                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-stone-500 uppercase">Days</th>
-                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-stone-500 uppercase">Submitted</th>
-                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-stone-500 uppercase">Status</th>
-                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-stone-500 uppercase">{isAdmin ? 'Actions' : 'Note'}</th>
+              <tr className="border-b border-gray-800 bg-white/[0.02]">
+                {isAdmin && <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">Person</th>}
+                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">Type</th>
+                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">Period</th>
+                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">Days</th>
+                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">Submitted</th>
+                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">Status</th>
+                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">{isAdmin ? 'Actions' : 'Note'}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-stone-800">
+            <tbody className="divide-y divide-gray-800">
               {filtered.map((r) => (
                 <tr key={r.id} className="transition-colors hover:bg-white/[0.04]">
                   {isAdmin && (
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-2.5">
-                        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#3a3a3a] text-[10px] font-bold text-stone-300">
+                        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#1e293b] text-[10px] font-bold text-stone-300">
                           {r.userName.split(' ').map((n) => n[0]).join('')}
                         </div>
                         <div>
                           <p className="font-medium text-stone-200">{r.userName}</p>
-                          <p className="text-xs text-stone-500 capitalize">{r.userRole}</p>
+                          <p className="text-xs text-slate-400 capitalize">{r.userRole}</p>
                         </div>
                       </div>
                     </td>
@@ -122,10 +122,10 @@ function RequestsPage() {
                     <Pill {...TYPE_PILL[r.type]} label={BADGE_LABEL[r.type]} />
                   </td>
                   <td className="px-5 py-3.5 font-medium whitespace-nowrap text-stone-300 tabular-nums">
-                    {r.start} <span className="mx-1 text-stone-600">→</span> {r.end}
+                    {r.start} <span className="mx-1 text-slate-500">→</span> {r.end}
                   </td>
                   <td className="px-5 py-3.5 font-semibold text-stone-200 tabular-nums">{r.days}d</td>
-                  <td className="px-5 py-3.5 text-stone-500 tabular-nums">{r.submitted}</td>
+                  <td className="px-5 py-3.5 text-slate-400 tabular-nums">{r.submitted}</td>
                   <td className="px-5 py-3.5">
                     <Pill {...STATUS_PILL[r.status]} label={BADGE_LABEL[r.status]} />
                   </td>
@@ -149,10 +149,10 @@ function RequestsPage() {
                           </button>
                         </div>
                       ) : (
-                        <span className="text-xs text-stone-600">—</span>
+                        <span className="text-xs text-slate-500">—</span>
                       )
                     ) : (
-                      <span className="block max-w-xs truncate text-xs text-stone-500">{r.comment || '—'}</span>
+                      <span className="block max-w-xs truncate text-xs text-slate-400">{r.comment || '—'}</span>
                     )}
                   </td>
                 </tr>
@@ -161,7 +161,7 @@ function RequestsPage() {
                 <tr>
                   <td colSpan={isAdmin ? 7 : 6} className="px-5 py-14 text-center">
                     <Inbox size={28} strokeWidth={1.75} className="mx-auto mb-3 text-stone-700" />
-                    <p className="text-sm text-stone-500">No requests found</p>
+                    <p className="text-sm text-slate-400">No requests found</p>
                   </td>
                 </tr>
               )}

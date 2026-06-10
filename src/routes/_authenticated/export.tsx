@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Download } from 'lucide-react'
 
@@ -78,7 +78,7 @@ function ExportPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-white">Export Data</h1>
-          <p className="mt-0.5 text-sm text-stone-400">Download leave records as CSV for payroll and reporting</p>
+          <p className="mt-0.5 text-sm text-slate-300">Download leave records as CSV for payroll and reporting</p>
         </div>
         <Button onClick={() => downloadCsv(buildCsv(filtered))}>
           <Download size={14} strokeWidth={1.75} /> Export {filtered.length} Records
@@ -89,7 +89,7 @@ function ExportPage() {
         {summary.map((s) => (
           <Card key={s.label} className={cn(DARK_CARD, 'p-5 text-center')}>
             <p className={`text-3xl font-semibold tabular-nums ${s.cls}`}>{s.value}</p>
-            <p className="mt-1.5 text-xs text-stone-400">{s.label}</p>
+            <p className="mt-1.5 text-xs text-slate-300">{s.label}</p>
           </Card>
         ))}
       </div>
@@ -104,23 +104,23 @@ function ExportPage() {
       </Card>
 
       <Card className={cn('overflow-hidden', DARK_CARD)}>
-        <div className="border-b border-stone-800 px-5 py-3">
-          <p className="text-xs text-stone-400">
+        <div className="border-b border-gray-800 px-5 py-3">
+          <p className="text-xs text-slate-300">
             <span className="font-semibold text-white">{filtered.length}</span> records selected
           </p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-stone-800 bg-white/[0.02]">
+              <tr className="border-b border-gray-800 bg-white/[0.02]">
                 {['Name', 'Role', 'Type', 'Period', 'Days', 'Status'].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-[11px] font-semibold tracking-wider text-stone-500 uppercase">
+                  <th key={h} className="px-4 py-3 text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-stone-800">
+            <tbody className="divide-y divide-gray-800">
               {filtered.map((r) => (
                 <tr key={r.id} className="transition-colors hover:bg-white/[0.04]">
                   <td className="px-4 py-3 font-medium text-stone-200">{r.userName}</td>
@@ -130,7 +130,7 @@ function ExportPage() {
                   <td className="px-4 py-3">
                     <Pill {...TYPE_PILL[r.type]} label={BADGE_LABEL[r.type]} />
                   </td>
-                  <td className="px-4 py-3 text-stone-400 tabular-nums">
+                  <td className="px-4 py-3 text-slate-300 tabular-nums">
                     {r.start} → {r.end}
                   </td>
                   <td className="px-4 py-3 font-semibold text-stone-200 tabular-nums">{r.days}d</td>
@@ -141,7 +141,7 @@ function ExportPage() {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-sm text-stone-500">
+                  <td colSpan={6} className="px-4 py-10 text-center text-sm text-slate-400">
                     No records match the current filters
                   </td>
                 </tr>
@@ -167,12 +167,12 @@ function FilterSelect<T extends string>({
 }) {
   return (
     <div>
-      <p className="mb-1.5 text-xs font-medium text-stone-400">{label}</p>
+      <p className="mb-1.5 text-xs font-medium text-slate-300">{label}</p>
       <Select value={value} onValueChange={(v) => onChange(v as T)}>
-        <SelectTrigger className="border-stone-700 bg-[#2a2a2a] text-stone-200 hover:bg-[#2f2f2f]">
+        <SelectTrigger className="border-gray-700 bg-[#1a2233] text-stone-200 hover:bg-[#1e293b]">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="border-stone-700 bg-[#2a2a2a]">
+        <SelectContent className="border-gray-700 bg-[#1a2233]">
           {options.map(([val, lab]) => (
             <SelectItem key={val} value={val} className="text-stone-300 data-[highlighted]:bg-white/[0.08] data-[highlighted]:text-white">
               {lab}
