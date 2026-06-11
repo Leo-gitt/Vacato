@@ -70,7 +70,13 @@ function LandingPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen bg-[#0d1117] text-white">
+    <div
+      className="min-h-screen text-white"
+      style={{
+        background:
+          'radial-gradient(ellipse 100% 55% at 50% 0%, rgba(45,212,191,0.22) 0%, rgba(34,211,238,0.10) 38%, #0d1117 68%), #0d1117',
+      }}
+    >
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-6 py-28 text-center">
         {/* Logo */}
