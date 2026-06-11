@@ -84,6 +84,36 @@ function CalendarPage() {
 
   const title = user.role === 'admin' ? 'College Calendar' : user.role === 'employee' ? 'Team Calendar' : 'My Calendar'
 
+  const todayStr = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, '0'),
+    String(today.getDate()).padStart(2, '0'),
+  ].join('-')
+  const in14 = new Date(today.getTime() + 14 * 86400000)
+  const in14Str = [
+    in14.getFullYear(),
+    String(in14.getMonth() + 1).padStart(2, '0'),
+    String(in14.getDate()).padStart(2, '0'),
+  ].join('-')
+  const summaryPool = user.role === 'student' ? approved.filter((r) => r.userId === user.id) : approved
+  const currentlyOut = summaryPool.filter((r) => r.start <= todayStr && r.end >= todayStr)
+  const upcoming14 = summaryPool
+    .filter((r) => r.start > todayStr && r.start <= in14Str)
+    .sort((a, b) => a.start.localeCompare(b.start))
+  const monthEnd = `${year}-${String(month + 1).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`
+  const monthStart = `${year}-${String(month + 1).padStart(2, '0')}-01`
+  const monthRequests = summaryPool.filter((r) => r.start <= monthEnd && r.end >= monthStart)
+  const monthTotalDays = monthRequests.reduce((acc, r) => acc + r.days, 0)
+  const byType: Record<LeaveType, number> = { vacation: 0, sick: 0, personal: 0 }
+  monthRequests.forEach((r) => { byType[r.type] += r.days })
+  const maxTypeVal = Math.max(...Object.values(byType), 1)
+  const fmt = (s: string) => {
+    const [, m, d] = s.split('-')
+    return `${MONTHS[Number(m) - 1].slice(0, 3)} ${Number(d)}`
+  }
+  const daysFromToday = (s: string) =>
+    Math.ceil((new Date(s).getTime() - today.getTime()) / 86400000)
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -180,6 +210,112 @@ function CalendarPage() {
           })}
         </div>
       </Card>
+
+      {/* Summary */}
+      <div className="mt-6 space-y-4">
+        {/* Stat cards */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="rounded-2xl border border-gray-800 bg-[#111827] p-5">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-rose-400">Out Today</p>
+            <p className="text-3xl font-bold text-white">{currentlyOut.length}</p>
+            <p className="mt-1 text-xs text-slate-500">
+              {currentlyOut.length === 0 ? 'Everyone is in' : `${currentlyOut.length} ${currentlyOut.length === 1 ? 'person' : 'people'} absent`}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-[#111827] p-5">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-amber-400">Next 14 Days</p>
+            <p className="text-3xl font-bold text-white">{upcoming14.length}</p>
+            <p className="mt-1 text-xs text-slate-500">
+              {upcoming14.length === 0 ? 'No absences planned' : `upcoming ${upcoming14.length === 1 ? 'absence' : 'absences'}`}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-[#111827] p-5">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-teal-400">{MONTHS[month]} — Total</p>
+            <p className="text-3xl font-bold text-white">{monthTotalDays}</p>
+            <p className="mt-1 text-xs text-slate-500">approved days off</p>
+          </div>
+        </div>
+
+        {/* Currently Out + Upcoming */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="rounded-2xl border border-gray-800 bg-[#111827] p-5">
+            <p className="mb-4 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Currently Out</p>
+            {currentlyOut.length === 0 ? (
+              <p className="text-sm text-slate-500">Everyone is in today.</p>
+            ) : (
+              <div className="space-y-3">
+                {currentlyOut.map((r) => (
+                  <div key={r.id} className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#1e293b] text-[10px] font-bold text-stone-300">
+                      {r.userName.split(' ').map((n) => n[0]).join('')}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-stone-200">{r.userName}</p>
+                      <p className="text-xs text-slate-400">
+                        {daysFromToday(r.end) === 0 ? 'Back tomorrow' : `Unavailable until ${fmt(r.end)}`}
+                      </p>
+                    </div>
+                    <Pill {...TYPE_PILL[r.type]} label={BADGE_LABEL[r.type]} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-gray-800 bg-[#111827] p-5">
+            <p className="mb-4 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Coming Up</p>
+            {upcoming14.length === 0 ? (
+              <p className="text-sm text-slate-500">No absences in the next 14 days.</p>
+            ) : (
+              <div className="space-y-3">
+                {upcoming14.map((r) => {
+                  const d = daysFromToday(r.start)
+                  return (
+                    <div key={r.id} className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#1e293b] text-[10px] font-bold text-stone-300">
+                        {r.userName.split(' ').map((n) => n[0]).join('')}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-stone-200">{r.userName}</p>
+                        <p className="text-xs text-slate-400">
+                          {fmt(r.start)} → {fmt(r.end)} · {d === 1 ? 'tomorrow' : `in ${d} days`}
+                        </p>
+                      </div>
+                      <Pill {...TYPE_PILL[r.type]} label={BADGE_LABEL[r.type]} />
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Leave type breakdown */}
+        <div className="rounded-2xl border border-gray-800 bg-[#111827] p-5">
+          <p className="mb-4 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+            Leave Breakdown — {MONTHS[month]} {year}
+          </p>
+          <div className="grid grid-cols-3 gap-6">
+            {(['vacation', 'sick', 'personal'] as Array<LeaveType>).map((type) => (
+              <div key={type}>
+                <div className="mb-2 flex items-center justify-between">
+                  <Pill {...TYPE_PILL[type]} label={BADGE_LABEL[type]} />
+                  <span className="text-sm font-bold tabular-nums text-stone-200">{byType[type]}d</span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                  <div
+                    className={cn(
+                      'h-full rounded-full transition-all duration-700',
+                      type === 'vacation' ? 'bg-blue-500' : type === 'sick' ? 'bg-rose-500' : 'bg-violet-500',
+                    )}
+                    style={{ width: `${(byType[type] / maxTypeVal) * 100}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <Dialog open={popupDay !== null} onOpenChange={(next) => !next && setPopupDay(null)}>
         <DialogContent>
