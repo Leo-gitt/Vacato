@@ -1,34 +1,43 @@
-import type { LeaveRequest, LeaveType, Role, User } from '@/lib/schemas'
+import type { Company, CompanyId, LeaveRequest, LeaveType, Role, User } from '@/lib/schemas'
 
-export const USERS: Record<Role, User> = {
-  student: {
-    id: 1,
-    name: 'Ana Petrovska',
-    role: 'student',
-    email: 'ana.petrovska@brainster.edu.mk',
-    avatar: 'AP',
-    dept: 'Software Development',
-    sub: 'Year 2',
+export const COMPANIES: Record<CompanyId, Company> = {
+  brainster: {
+    id: 'brainster',
+    name: 'Brainster Next College',
+    industry: 'Education',
+    logo: 'BN',
+    employeeCount: 24,
+    studentCount: 186,
+    employeesAway: 3,
+    studentsAway: 11,
   },
-  employee: {
-    id: 2,
-    name: 'Marko Dimovski',
-    role: 'employee',
-    email: 'marko.dimovski@brainster.edu.mk',
-    avatar: 'MD',
-    dept: 'Academic Affairs',
-    sub: 'Lecturer',
-  },
-  admin: {
-    id: 3,
-    name: 'Elena Stojanovic',
-    role: 'admin',
-    email: 'elena.stojanovic@brainster.edu.mk',
-    avatar: 'ES',
-    dept: 'Human Resources',
-    sub: 'HR Manager',
+  techflow: {
+    id: 'techflow',
+    name: 'TechFlow Solutions',
+    industry: 'Software',
+    logo: 'TF',
+    employeeCount: 47,
+    studentCount: 0,
+    employeesAway: 5,
+    studentsAway: 0,
   },
 }
+
+export const COMPANY_USERS: Record<CompanyId, Record<Role, User>> = {
+  brainster: {
+    student: { id: 1, name: 'Ana Petrovska', role: 'student', email: 'ana.petrovska@brainster.edu.mk', avatar: 'AP', dept: 'Software Development', sub: 'Year 2' },
+    employee: { id: 2, name: 'Marko Dimovski', role: 'employee', email: 'marko.dimovski@brainster.edu.mk', avatar: 'MD', dept: 'Academic Affairs', sub: 'Lecturer' },
+    admin: { id: 3, name: 'Elena Stojanovic', role: 'admin', email: 'elena.stojanovic@brainster.edu.mk', avatar: 'ES', dept: 'Human Resources', sub: 'HR Manager' },
+  },
+  techflow: {
+    student: { id: 11, name: 'Jamie Chen', role: 'student', email: 'jamie.chen@techflow.io', avatar: 'JC', dept: 'Engineering', sub: 'Junior Developer' },
+    employee: { id: 12, name: 'Sara Novak', role: 'employee', email: 'sara.novak@techflow.io', avatar: 'SN', dept: 'Engineering', sub: 'Senior Developer' },
+    admin: { id: 13, name: 'Luka Trajkov', role: 'admin', email: 'luka.trajkov@techflow.io', avatar: 'LT', dept: 'People & Culture', sub: 'HR Lead' },
+  },
+}
+
+// Backward-compat alias
+export const USERS: Record<Role, User> = COMPANY_USERS.brainster
 
 export const INITIAL_REQUESTS: Array<LeaveRequest> = [
   { id: 1, userId: 1, userName: 'Ana Petrovska', userRole: 'student', type: 'vacation', start: '2026-06-10', end: '2026-06-14', days: 5, status: 'pending', reason: 'Family vacation trip to the Adriatic coast', submitted: '2026-06-01', comment: '', hasDoc: false },
@@ -45,7 +54,35 @@ export const INITIAL_REQUESTS: Array<LeaveRequest> = [
   { id: 12, userId: 10, userName: 'Dejan Petrović', userRole: 'employee', type: 'vacation', start: '2026-06-22', end: '2026-06-26', days: 5, status: 'pending', reason: 'Family holiday', submitted: '2026-06-04', comment: '', hasDoc: false },
 ]
 
+export const TECHFLOW_REQUESTS: Array<LeaveRequest> = [
+  { id: 101, userId: 12, userName: 'Sara Novak', userRole: 'employee', type: 'vacation', start: '2026-07-07', end: '2026-07-18', days: 12, status: 'pending', reason: 'Summer vacation — booked flights to Spain', submitted: '2026-06-05', comment: '', hasDoc: false },
+  { id: 102, userId: 21, userName: 'Tom Krstić', userRole: 'employee', type: 'sick', start: '2026-06-02', end: '2026-06-03', days: 2, status: 'approved', reason: 'Fever and stomach virus', submitted: '2026-06-02', comment: 'Approved. Get well soon.', hasDoc: true },
+  { id: 103, userId: 22, userName: 'Maja Ilić', userRole: 'employee', type: 'personal', start: '2026-06-09', end: '2026-06-09', days: 1, status: 'pending', reason: 'Moving apartments', submitted: '2026-06-07', comment: '', hasDoc: false },
+  { id: 104, userId: 23, userName: 'Nikola Đorđić', userRole: 'employee', type: 'vacation', start: '2026-06-16', end: '2026-06-20', days: 5, status: 'approved', reason: 'Long weekend — Montenegro coast', submitted: '2026-06-01', comment: 'Approved.', hasDoc: false },
+  { id: 105, userId: 24, userName: 'Ana Todorović', userRole: 'employee', type: 'sick', start: '2026-05-28', end: '2026-05-29', days: 2, status: 'approved', reason: 'Migraine — prescribed rest', submitted: '2026-05-28', comment: 'Approved.', hasDoc: true },
+  { id: 106, userId: 12, userName: 'Sara Novak', userRole: 'employee', type: 'personal', start: '2026-05-15', end: '2026-05-15', days: 1, status: 'approved', reason: 'Dentist appointment', submitted: '2026-05-14', comment: 'Approved.', hasDoc: false },
+  { id: 107, userId: 25, userName: 'Ivan Kovač', userRole: 'employee', type: 'vacation', start: '2026-06-23', end: '2026-06-27', days: 5, status: 'pending', reason: 'Family holiday in Croatia', submitted: '2026-06-06', comment: '', hasDoc: false },
+  { id: 108, userId: 26, userName: 'Petra Lukić', userRole: 'employee', type: 'sick', start: '2026-06-04', end: '2026-06-06', days: 3, status: 'rejected', reason: 'Back pain', submitted: '2026-06-04', comment: 'Please submit a medical certificate for sick leave longer than 2 days.', hasDoc: false },
+  { id: 109, userId: 27, userName: 'Miloš Đukić', userRole: 'employee', type: 'vacation', start: '2026-08-04', end: '2026-08-15', days: 12, status: 'pending', reason: 'Annual leave — Cyprus trip', submitted: '2026-06-10', comment: '', hasDoc: false },
+  { id: 110, userId: 28, userName: 'Katarina Simić', userRole: 'employee', type: 'personal', start: '2026-06-12', end: '2026-06-12', days: 1, status: 'approved', reason: 'Car inspection and license renewal', submitted: '2026-06-10', comment: 'Approved.', hasDoc: false },
+]
+
+export const COMPANY_REQUESTS: Record<CompanyId, Array<LeaveRequest>> = {
+  brainster: INITIAL_REQUESTS,
+  techflow: TECHFLOW_REQUESTS,
+}
+
 export const LEAVE_BALANCE: Record<'student' | 'employee', Record<LeaveType, { total: number; used: number }>> = {
-  student: { vacation: { total: 20, used: 5 }, sick: { total: 15, used: 5 }, personal: { total: 5, used: 1 } },
+  student:  { vacation: { total: 20, used: 5 }, sick: { total: 15, used: 5 }, personal: { total: 5, used: 1 } },
   employee: { vacation: { total: 21, used: 10 }, sick: { total: 15, used: 3 }, personal: { total: 5, used: 0 } },
+}
+
+const TECHFLOW_LEAVE_BALANCE: Record<'student' | 'employee', Record<LeaveType, { total: number; used: number }>> = {
+  student:  { vacation: { total: 28, used: 3 }, sick: { total: 10, used: 0 }, personal: { total: 5, used: 2 } },
+  employee: { vacation: { total: 28, used: 8 }, sick: { total: 10, used: 1 }, personal: { total: 5, used: 3 } },
+}
+
+export const COMPANY_LEAVE_BALANCE: Record<CompanyId, Record<'student' | 'employee', Record<LeaveType, { total: number; used: number }>>> = {
+  brainster: LEAVE_BALANCE,
+  techflow: TECHFLOW_LEAVE_BALANCE,
 }

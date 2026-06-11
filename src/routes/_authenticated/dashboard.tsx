@@ -1,7 +1,8 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   ArrowRight,
+  Briefcase,
   CheckCircle,
   Clock,
   GraduationCap,
@@ -9,20 +10,20 @@ import {
   Sun,
   Thermometer,
   User as UserIcon,
-  Users
-
+  Users,
 } from 'lucide-react'
-import type {LucideIcon} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react'
 
 import { BADGE_LABEL } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { DARK_CARD, Pill, STATUS_PILL, TYPE_PILL } from '@/components/dark-ui'
 import { NewRequestModal } from '@/components/new-request-modal'
-import { StatCard  } from '@/components/stat-card'
-import type {StatColor} from '@/components/stat-card';
+import { StatCard } from '@/components/stat-card'
+import type { StatColor } from '@/components/stat-card'
 import { useCreateRequest, useRequests } from '@/hooks/use-requests'
-import { LEAVE_BALANCE } from '@/lib/mock-data'
+import { COMPANIES, COMPANY_LEAVE_BALANCE } from '@/lib/mock-data'
+import { useAuthStore } from '@/stores/auth-store'
 import { useLeavePolicyStore } from '@/stores/leave-policy-store'
 import type { LeaveRequest, LeaveType } from '@/lib/schemas'
 import { Route as AuthRoute } from '@/routes/_authenticated'
@@ -47,16 +48,20 @@ const BALANCE_CARDS: Array<{ key: LeaveType; label: string; icon: LucideIcon; cl
 
 function DashboardPage() {
   const { user } = AuthRoute.useRouteContext()
+  const companyId = useAuthStore((s) => s.companyId)
+  const company = COMPANIES[companyId]
   const navigate = useNavigate()
   const { data: requests = [] } = useRequests()
   const createRequest = useCreateRequest(user)
   const [modalOpen, setModalOpen] = useState(false)
 
-  const { policy } = useLeavePolicyStore()
+  const { policies } = useLeavePolicyStore()
+  const policy = policies[companyId]
+
   const mine = requests.filter((r) => r.userId === user.id)
   const balance = user.role === 'admin' ? null : (() => {
     const role = user.role as 'student' | 'employee'
-    const used = LEAVE_BALANCE[role]
+    const used = COMPANY_LEAVE_BALANCE[companyId][role]
     const totals = policy[role]
     return {
       vacation: { total: totals.vacation, used: used.vacation.used },
@@ -64,6 +69,11 @@ function DashboardPage() {
       personal: { total: totals.personal, used: used.personal.used },
     }
   })()
+
+  const fourthAdminStat: { label: string; value: number; sub: string; color: StatColor; icon: LucideIcon } =
+    company.studentCount > 0
+      ? { label: 'Students', value: company.studentCount, sub: `${company.studentsAway} away this week`, color: 'stone', icon: GraduationCap }
+      : { label: 'Departments', value: 8, sub: '2 teams on leave', color: 'stone', icon: Briefcase }
 
   const stats: Array<{ label: string; value: number; sub: string; color: StatColor; icon: LucideIcon; used?: number; total?: number }> = balance
     ? [
@@ -75,8 +85,8 @@ function DashboardPage() {
     : [
         { label: 'Pending', value: requests.filter((r) => r.status === 'pending').length, sub: 'Awaiting your review', color: 'amber', icon: Clock },
         { label: 'Approved', value: requests.filter((r) => r.status === 'approved').length, sub: 'Total this year', color: 'green', icon: CheckCircle },
-        { label: 'Employees', value: 24, sub: '3 away this week', color: 'blue', icon: Users },
-        { label: 'Students', value: 186, sub: '11 away this week', color: 'stone', icon: GraduationCap },
+        { label: 'Employees', value: company.employeeCount, sub: `${company.employeesAway} away this week`, color: 'blue', icon: Users },
+        fourthAdminStat,
       ]
 
   const isAdmin = user.role === 'admin'

@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { Check, FileText, X } from 'lucide-react'
 
 import { BADGE_LABEL } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -44,6 +44,12 @@ export function ReviewRequestModal({ request, action, onClose, onConfirm }: Revi
                 {request.end}
               </p>
               <p className="mt-1 border-t border-gray-800 pt-1 text-xs text-slate-400">{request.reason}</p>
+              {request.hasDoc && (
+                <div className="mt-2 flex items-center gap-1.5 rounded-md bg-green-500/10 px-2 py-1.5">
+                  <FileText size={12} strokeWidth={1.75} className="flex-shrink-0 text-green-400" />
+                  <span className="text-xs font-medium text-green-300">Medical document uploaded</span>
+                </div>
+              )}
             </div>
             <div>
               <Label className="text-slate-300">

@@ -56,3 +56,18 @@ export const reviewActionSchema = z.object({
   comment: z.string(),
 })
 export type ReviewAction = z.infer<typeof reviewActionSchema>
+
+export const companyIdSchema = z.enum(['brainster', 'techflow'])
+export type CompanyId = z.infer<typeof companyIdSchema>
+
+export const companySchema = z.object({
+  id: companyIdSchema,
+  name: z.string(),
+  industry: z.string(),
+  logo: z.string(),
+  employeeCount: z.number(),
+  studentCount: z.number(),
+  employeesAway: z.number(),
+  studentsAway: z.number(),
+})
+export type Company = z.infer<typeof companySchema>

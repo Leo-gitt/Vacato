@@ -2,12 +2,16 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-import { Card } from '@/components/ui/card'
-import { DARK_CARD } from '@/components/dark-ui'
-import { useRequests } from '@/hooks/use-requests'
 import { BADGE_LABEL } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { DARK_CARD, Pill, TYPE_PILL } from '@/components/dark-ui'
+import { useRequests } from '@/hooks/use-requests'
+import { COMPANIES } from '@/lib/mock-data'
 import type { LeaveRequest, LeaveType } from '@/lib/schemas'
 import { Route as AuthRoute } from '@/routes/_authenticated'
+import { useAuthStore } from '@/stores/auth-store'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_authenticated/calendar')({
@@ -34,10 +38,13 @@ const LEAF_CLS: Record<LeaveType, string> = {
 
 function CalendarPage() {
   const { user } = AuthRoute.useRouteContext()
+  const { companyId } = useAuthStore()
+  const hasStudents = COMPANIES[companyId].studentCount > 0
   const { data: requests = [] } = useRequests()
   const today = new Date()
   const [month, setMonth] = useState(5)
   const [year, setYear] = useState(2026)
+  const [popupDay, setPopupDay] = useState<{ day: number; leaves: Array<LeaveRequest> } | null>(null)
 
   const approved = requests.filter((r) => r.status === 'approved')
 
@@ -128,14 +135,17 @@ function CalendarPage() {
             const weekend = i % 7 === 0 || i % 7 === 6
             const today_ = isToday(day)
             const lastRow = i >= cells.length - 7
+            const clickable = !!day && leaves.length > 0
             return (
               <div
                 key={i}
+                onClick={() => clickable && setPopupDay({ day, leaves })}
                 className={cn(
                   'min-h-24 border-gray-800 p-2 transition-colors',
                   i % 7 !== 6 && 'border-r',
                   !lastRow && 'border-b',
                   !day ? 'bg-white/[0.015]' : weekend ? 'bg-white/[0.01]' : 'hover:bg-white/[0.04]',
+                  clickable && 'cursor-pointer',
                 )}
               >
                 {day && (
@@ -152,13 +162,16 @@ function CalendarPage() {
                       {leaves.slice(0, 2).map((l, li) => (
                         <div
                           key={li}
-                          title={`${l.userName} — ${l.type}`}
                           className={cn('truncate rounded px-1.5 py-0.5 text-[11px] leading-tight font-medium', LEAF_CLS[l.type])}
                         >
                           {user.role !== 'student' ? l.userName.split(' ')[0] : BADGE_LABEL[l.type]}
                         </div>
                       ))}
-                      {leaves.length > 2 && <p className="px-1 text-[10px] text-slate-400">+{leaves.length - 2} more</p>}
+                      {leaves.length > 2 && (
+                        <p className="px-1 text-[10px] font-medium text-slate-400 hover:text-slate-300">
+                          +{leaves.length - 2} more
+                        </p>
+                      )}
                     </div>
                   </>
                 )}
@@ -167,6 +180,47 @@ function CalendarPage() {
           })}
         </div>
       </Card>
+
+      <Dialog open={popupDay !== null} onOpenChange={(next) => !next && setPopupDay(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {popupDay && `${MONTHS[month]} ${popupDay.day}, ${year}`} — {popupDay?.leaves.length} absent
+            </DialogTitle>
+          </DialogHeader>
+          <DialogBody className="space-y-2">
+            {popupDay?.leaves.map((l) => (
+              <div key={l.id} className="flex items-start gap-3 rounded-lg border border-gray-800 bg-white/[0.03] px-3.5 py-3">
+                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#1e293b] text-[10px] font-bold text-stone-300">
+                  {l.userName.split(' ').map((n) => n[0]).join('')}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <p className="text-sm font-semibold text-stone-200">{l.userName}</p>
+                    <Pill {...TYPE_PILL[l.type]} label={BADGE_LABEL[l.type]} />
+                    {hasStudents && (
+                      <span
+                        className={cn(
+                          'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ring-inset',
+                          l.userRole === 'student'
+                            ? 'bg-emerald-500/15 text-emerald-400 ring-emerald-500/30'
+                            : 'bg-sky-500/15 text-sky-400 ring-sky-500/30',
+                        )}
+                      >
+                        {l.userRole === 'student' ? 'Student' : 'Employee'}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-0.5 line-clamp-2 text-xs text-slate-400">{l.reason}</p>
+                </div>
+              </div>
+            ))}
+            <div className="flex justify-end pt-1">
+              <Button variant="secondary" onClick={() => setPopupDay(null)}>Close</Button>
+            </div>
+          </DialogBody>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

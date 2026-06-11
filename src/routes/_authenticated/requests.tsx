@@ -1,12 +1,13 @@
 ﻿import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Check, Inbox, Plus, X } from 'lucide-react'
+import { Check, FileText, Inbox, Plus, X } from 'lucide-react'
 
 import { BADGE_LABEL } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { DARK_CARD, Pill, STATUS_PILL, TYPE_PILL } from '@/components/dark-ui'
 import { NewRequestModal } from '@/components/new-request-modal'
+import { RequestDetailModal } from '@/components/request-detail-modal'
 import { ReviewRequestModal } from '@/components/review-request-modal'
 import { useCreateRequest, useRequests, useReviewRequest } from '@/hooks/use-requests'
 import type { LeaveRequest, RequestStatus } from '@/lib/schemas'
@@ -29,6 +30,7 @@ function RequestsPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [actionReq, setActionReq] = useState<LeaveRequest | null>(null)
   const [actionType, setActionType] = useState<'approved' | 'rejected' | null>(null)
+  const [detailReq, setDetailReq] = useState<LeaveRequest | null>(null)
 
   const isAdmin = user.role === 'admin'
   const pool = isAdmin ? requests : requests.filter((r) => r.userId === user.id)
@@ -104,7 +106,11 @@ function RequestsPage() {
             </thead>
             <tbody className="divide-y divide-gray-800">
               {filtered.map((r) => (
-                <tr key={r.id} className="transition-colors hover:bg-white/[0.04]">
+                <tr
+                  key={r.id}
+                  onClick={() => setDetailReq(r)}
+                  className="cursor-pointer transition-colors hover:bg-white/[0.04]"
+                >
                   {isAdmin && (
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-2.5">
@@ -113,7 +119,15 @@ function RequestsPage() {
                         </div>
                         <div>
                           <p className="font-medium text-stone-200">{r.userName}</p>
-                          <p className="text-xs text-slate-400 capitalize">{r.userRole}</p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs text-slate-400 capitalize">{r.userRole}</p>
+                            {r.hasDoc && (
+                              <span className="inline-flex items-center gap-0.5 rounded bg-green-500/10 px-1 py-0.5 text-[10px] font-medium text-green-400">
+                                <FileText size={9} strokeWidth={2} />
+                                doc
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -134,14 +148,14 @@ function RequestsPage() {
                       r.status === 'pending' ? (
                         <div className="flex gap-1.5">
                           <button
-                            onClick={() => openAction(r, 'approved')}
+                            onClick={(e) => { e.stopPropagation(); openAction(r, 'approved') }}
                             className="cursor-pointer rounded-md bg-green-500/10 p-1.5 text-green-400 transition-colors hover:bg-green-500/20"
                             title="Approve"
                           >
                             <Check size={13} strokeWidth={1.75} />
                           </button>
                           <button
-                            onClick={() => openAction(r, 'rejected')}
+                            onClick={(e) => { e.stopPropagation(); openAction(r, 'rejected') }}
                             className="cursor-pointer rounded-md bg-red-500/10 p-1.5 text-red-400 transition-colors hover:bg-red-500/20"
                             title="Reject"
                           >
@@ -172,6 +186,7 @@ function RequestsPage() {
 
       <NewRequestModal open={modalOpen} onOpenChange={setModalOpen} onSubmit={(input) => createRequest.mutate(input)} />
       <ReviewRequestModal request={actionReq} action={actionType} onClose={closeAction} onConfirm={confirmAction} />
+      <RequestDetailModal request={detailReq} onClose={() => setDetailReq(null)} />
     </div>
   )
 }
